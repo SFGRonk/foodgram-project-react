@@ -130,3 +130,11 @@ dmypy.json
 
 # .idea
 .idea
+
+
+
+backend/foodgram/trash
+backend/foodgram/media/
+backend/foodgram/env.sh
+
+
