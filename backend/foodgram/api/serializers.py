@@ -120,7 +120,7 @@ class RecipeReadSerializer(ModelSerializer):
             'id',
             'name',
             'measurement_unit',
-            'ingredientinrecipe__amount'  # поправить, должно быть прост amount
+            'ingredientinrecipe__amount'  # не знаю как отображать 'amount'
         )
         return ingredients
 
