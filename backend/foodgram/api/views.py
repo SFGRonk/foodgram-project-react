@@ -8,7 +8,6 @@ from .serializers import (
     RecipeLessSerializer,
     TagSerializer,
     IngredientSerializer,
-    CustomUserSerializer,
     SubscribeSerializer
 )
 from .permissions import IsAdminOrReadOnly, IsAuthorOrReadOnly
@@ -49,7 +48,9 @@ class RecipeViewSet(ModelViewSet):
     filterset_fields = ('tags',)
 
     @action(
-            methods=['post'], detail=True, permission_classes=[IsAuthenticated]
+        methods=['post'],
+        detail=True,
+        permission_classes=[IsAuthenticated]
     )
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
@@ -60,17 +61,17 @@ class RecipeViewSet(ModelViewSet):
         return RecipeWriteSerializer
 
     @action(
-            methods=['post', 'delete'],
-            detail=True,
-            permission_classes=[IsAuthenticated]
+        methods=['post', 'delete'],
+        detail=True,
+        permission_classes=[IsAuthenticated]
     )
     def favorite(self, request, pk):
         return self.add_del(Favorite, request, pk)
 
     @action(
-            methods=['post', 'delete'],
-            detail=True,
-            permission_classes=[IsAuthenticated]
+        methods=['post', 'delete'],
+        detail=True,
+        permission_classes=[IsAuthenticated]
     )
     def shopping_cart(self, request, pk):
         return self.add_del(ShoppingCart, request, pk)
@@ -101,9 +102,9 @@ class RecipeViewSet(ModelViewSet):
         )
 
     @action(
-            methods=['get'],
-            detail=False,
-            permission_classes=[IsAuthenticated]
+        methods=['get'],
+        detail=False,
+        permission_classes=[IsAuthenticated]
     )
     def download_shopping_cart(self, request):
         if not request.user.shopping_cart.exists():
@@ -140,7 +141,6 @@ class RecipeViewSet(ModelViewSet):
 
 class CustomUserViewSet(UserViewSet):
     queryset = User.objects.all()
-    serializer_class = CustomUserSerializer
 
     @action(methods=['post', 'delete'], detail=True)
     def subscribe(self, request, **kwargs):
@@ -171,8 +171,9 @@ class CustomUserViewSet(UserViewSet):
     def subscriptions(self, request):
         user = request.user
         queryset = User.objects.filter(subscribing__user=user)
-        pages = self.paginate_queryset(queryset)
-        serializer = SubscribeSerializer(pages,
-                                         many=True,
-                                         context={'request': request})
-        return self.get_paginated_response(serializer.data)
+        serializer = SubscribeSerializer(
+            queryset,
+            many=True,
+            context={'request': request}
+        )
+        return Response(serializer.data)

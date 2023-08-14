@@ -2,7 +2,6 @@ from django.shortcuts import get_object_or_404
 from django.core.files.base import ContentFile
 from djoser.serializers import UserSerializer
 
-from rest_framework import status
 from rest_framework.exceptions import ValidationError
 from rest_framework.fields import IntegerField, SerializerMethodField
 from rest_framework.relations import PrimaryKeyRelatedField
@@ -59,26 +58,16 @@ class SubscribeSerializer(CustomUserSerializer):
         author = self.instance
         user = self.context.get('request').user
         if Subscribe.objects.filter(author=author, user=user).exists():
-            raise ValidationError(
-                detail='Вы уже подписаны на этого пользователя!',
-                code=status.HTTP_400_BAD_REQUEST
-            )
+            raise ValidationError('ERR: Already subscribed')
         if user == author:
-            raise ValidationError(
-                detail='Вы не можете подписаться на самого себя!',
-                code=status.HTTP_400_BAD_REQUEST
-            )
+            raise ValidationError('ERR: Cannot subscribe at youself')
         return data
 
     def get_recipes_count(self, obj):
         return obj.recipes.count()
 
     def get_recipes(self, obj):
-        request = self.context.get('request')
-        limit = request.GET.get('recipes_limit')
         recipes = obj.recipes.all()
-        if limit:
-            recipes = recipes[:int(limit)]
         serializer = RecipeLessSerializer(recipes, many=True, read_only=True)
         return serializer.data
 
