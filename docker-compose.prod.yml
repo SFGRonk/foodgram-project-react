@@ -14,18 +14,14 @@ services:
       - pg_data:/var/lib/postgresql/data
   
   backend:
-    build:
-      context: ../backend/
-      dockerfile: Dockerfile
+    image: sfgronk/foodgram_backend
     env_file: .env
     volumes:
       - media:/app/media
       - static:/app/static
   
   frontend:
-    build:
-      context: ../frontend
-      dockerfile: Dockerfile
+    image: sfgronk/foodgram_frontend
     volumes:
       # - ../frontend/:/app/result_build/
       - static:/app/result_build/build/
