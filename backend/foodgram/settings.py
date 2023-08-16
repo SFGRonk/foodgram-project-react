@@ -6,7 +6,7 @@ load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-p6zi)i@-jry+ha31(%a)8s1z2_-r06okr@1i@up8ej1)n5$#i6'
+SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-p6zi)i@-jry+ha31(%a)8s1z2_-r06okr@1i@up8ej1)n5$#i6')
 
 DEBUG = True
 
@@ -25,8 +25,8 @@ INSTALLED_APPS = [
     'djoser',
     'django_filters',
 
-    'app',
-    'api',
+    'app.apps.AppConfig',
+    'api.apps.ApiConfig',
     'users.apps.UsersConfig',
 
 ]
@@ -68,6 +68,17 @@ DATABASES = {
     }
 }
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': os.getenv('POSTGRES_DB', 'django'),
+#         'USER': os.getenv('POSTGRES_USER', 'django'),
+#         'PASSWORD': os.getenv('POSTGRES_PASSWORD', ''),
+#         'HOST': os.getenv('DB_HOST', ''),
+#         'PORT': os.getenv('DB_PORT', 5432)
+#     }
+# }
+
 AUTH_USER_MODEL = 'users.User'
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -97,7 +108,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'static/static')
 
 MEDIA_URL = '/media/'
 
@@ -107,9 +118,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
+        # 'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.BasicAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
 
     ),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',

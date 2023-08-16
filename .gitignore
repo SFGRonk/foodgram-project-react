@@ -132,9 +132,12 @@ dmypy.json
 .idea
 
 
+# My
+backend/trash
+backend/media/
+backend/static/
+backend/env.sh
+.vscode
 
-backend/foodgram/trash
-backend/foodgram/media/
-backend/foodgram/env.sh
 
 

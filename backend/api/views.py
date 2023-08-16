@@ -32,7 +32,7 @@ from reportlab.pdfbase.ttfonts import TTFont
 class IngredientViewSet(ReadOnlyModelViewSet):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
-    permission_classes = IsAdminOrReadOnly
+    permission_classes = (IsAdminOrReadOnly,)
 
 
 class TagViewSet(ReadOnlyModelViewSet):

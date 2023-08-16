@@ -1,5 +1,9 @@
 from django.db import models
-from django.core.validators import RegexValidator
+from django.core.validators import (
+    RegexValidator,
+    MaxValueValidator,
+    MinValueValidator
+)
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
@@ -23,7 +27,10 @@ class Recipe(models.Model):
         through='IngredientInRecipe'
     )
     tags = models.ManyToManyField('Tag', related_name='recipes')
-    cooking_time = models.PositiveSmallIntegerField(default=1)
+    cooking_time = models.PositiveSmallIntegerField(
+        default=1,
+        validators=[MinValueValidator(1), MaxValueValidator(1000)]
+    )
 
     def __str__(self):
         return self.name
@@ -65,7 +72,9 @@ class IngredientInRecipe(models.Model):
         Ingredient,
         on_delete=models.CASCADE
     )
-    amount = models.PositiveSmallIntegerField()
+    amount = models.PositiveSmallIntegerField(
+        validators=[MinValueValidator(1), MaxValueValidator(10000)]
+    )
 
     def __str__(self):
         return (

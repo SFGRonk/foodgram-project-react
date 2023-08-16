@@ -1,4 +1,5 @@
-from django.shortcuts import get_object_or_404
+from django.db import transaction
+from django.db.models import F
 from django.core.files.base import ContentFile
 from djoser.serializers import UserSerializer
 
@@ -120,7 +121,7 @@ class RecipeReadSerializer(ModelSerializer):
             'id',
             'name',
             'measurement_unit',
-            'ingredientinrecipe__amount'  # не знаю как отображать 'amount'
+            amount=F('ingredientinrecipe__amount')
         )
         return ingredients
 
@@ -160,16 +161,8 @@ class RecipeWriteSerializer(ModelSerializer):
 
         if not ingredients:
             raise ValidationError('ERR: Need to add an ingredient')
-
-        ingredient_list = []
-        for i in ingredients:
-            ingredient = get_object_or_404(Ingredient, id=i['id'])
-            if ingredient in ingredient_list:
-                raise ValidationError('ERR: The ingredient is already in use')
-            if i['amount'] < 1:
-                raise ValidationError('ERR: The amount must be greater than 0')
-            ingredient_list.append(ingredient)
-
+        if len(ingredients) != len(tuple(ingredients)):
+            raise ValidationError('ERR: The ingredient is already in use')
         return ingredients
 
     def validate_tags(self, tags):
@@ -177,22 +170,20 @@ class RecipeWriteSerializer(ModelSerializer):
         if not tags:
             raise ValidationError({'ERR: Need to add a tag'})
 
-        tag_list = []
-        for i in tags:
-            if i in tag_list:
-                raise ValidationError({'ERR: The tag is already in use'})
-            tag_list.append(i)
+        if len(tags) != len(set(tags)):
+            raise ValidationError({'ERR: The tag is already in use'})
 
         return tags
 
     def create_ingredients_in_recipe(self, ingredients, recipe):
-        for i in ingredients:
-            IngredientInRecipe.objects.create(
+        IngredientInRecipe.objects.bulk_create([
+            IngredientInRecipe(
                 recipe=recipe,
-                ingredient=Ingredient.objects.get(id=i['id']),
-                amount=i['amount']
-            )
+                ingredient_id=item['id'],
+                amount=item['amount']
+            )for item in ingredients])
 
+    @transaction.atomic
     def create(self, data):
         tags = data.pop('tags')
         ingredients = data.pop('ingredients')
@@ -204,6 +195,7 @@ class RecipeWriteSerializer(ModelSerializer):
         )
         return recipe
 
+    @transaction.atomic
     def update(self, instance, data):
         tags = data.pop('tags')
         ingredients = data.pop('ingredients')
