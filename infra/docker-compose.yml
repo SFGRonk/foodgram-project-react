@@ -40,3 +40,4 @@ services:
       - ../docs/:/usr/share/nginx/html/api/docs/
       - static:/usr/share/nginx/html/
       - media:/usr/share/nginx/html/media/
+

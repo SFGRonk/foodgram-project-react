@@ -30,13 +30,21 @@ services:
       # - ../frontend/:/app/result_build/
       - static:/app/result_build/build/
   
-  nginx:
-    image: nginx:1.19.3
-    ports:
-      - "80:80"
-    volumes:
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+  # nginx:
+  #   image: nginx:1.19.3
+  #   ports:
+  #     - "80:80"
+  #   volumes:
+  #     - ./nginx.conf:/etc/nginx/conf.d/default.conf
       # - ../frontend/build:/usr/share/nginx/html/
-      - ../docs/:/usr/share/nginx/html/api/docs/
+      # - ../docs/:/usr/share/nginx/html/api/docs/
+
+
+  gateway:
+    image: sfgronk/foodgram_gateway
+    env_file: .env
+    ports:
+      - 10000:80
+    volumes:
       - static:/usr/share/nginx/html/
       - media:/usr/share/nginx/html/media/
