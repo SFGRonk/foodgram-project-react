@@ -1,15 +1,16 @@
+from django.core.files.base import ContentFile
 from django.db import transaction
 from django.db.models import F
-from django.core.files.base import ContentFile
 from djoser.serializers import UserSerializer
 
 from rest_framework.exceptions import ValidationError
 from rest_framework.fields import IntegerField, SerializerMethodField
 from rest_framework.relations import PrimaryKeyRelatedField
-from rest_framework.serializers import ModelSerializer, ImageField
+from rest_framework.serializers import ImageField, ModelSerializer
 
-from app.models import Recipe, Tag, Ingredient, IngredientInRecipe
-from users.models import User, Subscribe
+from app.models import Ingredient, IngredientInRecipe, Recipe, Tag
+from users.models import Subscribe, User
+
 import base64
 
 
