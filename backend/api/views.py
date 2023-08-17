@@ -131,8 +131,8 @@ class RecipeViewSet(ModelViewSet):
             'filename="shopping_cart.pdf"'
         )
         p = canvas.Canvas(response)
-        pdfmetrics.registerFont(TTFont('Arial', 'arial.ttf'))
-        p.setFont('Arial', 10)
+        pdfmetrics.registerFont(TTFont('DejaVuSerif', 'DejaVuSerif.ttf'))
+        p.setFont('DejaVuSerif', 10)
         p.drawString(10, 800, shopping_cart)
         p.showPage()
         p.save()
