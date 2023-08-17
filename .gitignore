@@ -137,6 +137,7 @@ backend/trash
 backend/media/
 backend/static/
 backend/env.sh
+/infra
 .vscode
 
 
